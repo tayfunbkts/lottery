@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bausch & Lomb Çekiliş Uygulaması v1.0</title>
+  <link rel="shortcut icon" href="https://tayfunbkts.github.io/bl/bl.ico" type="image/x-icon">
+  <style>
+    body {
+      color: black;
+      font-size: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .flex-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .winner-box {
+      border: 2px solid #13747B;
+      padding: 10px;
+      margin: 0 10px;
+      text-align: center;
+      box-sizing: border-box;
+      width: calc((900px - 40px) / 3);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    li:hover {
+      background-color: #f0f0f0;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+      background-color: #199CA6;
+      color: #fff;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #1EB8C4;
+    }
+
+    button:active {
+      background-color: #1EB8C4;
+    }
+
+    .input-container textarea {
+      margin-bottom: 10px;
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: none;
+      width: 335px;
+      height: 150px;
+      overflow: auto;
+    }
+
+    .button-container button {
+      flex: 1;
+      margin: 10px 5px;
+    }
+
+    #loadingMessage {
+      font-weight: bold;
+      color: #13747B;
+
+    }
+
+    .box-title {
+      background-color: #13747B;
+      color: #fff;
+      margin: -10px -10px 0;
+      padding: 5px 10px;
+      text-align: center;
+    }
+
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      margin: 0px 10px 5px 5px;
+
+    }
+
+    .number-of-winners-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      border-radius: 8px;
+      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+      margin: 25px 5px 5px 10px;
+      padding: 20px;
+    }
+
+    .number-of-winners {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .main-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .konfeti {
+        font-size: 20px;
+        position: absolute;
+        pointer-events: none;
+        animation: hareket 2s infinite;
+    }
+
+    @keyframes hareket {
+        0% {
+            transform: translateY(0) rotate(0deg);
+        }
+        100% {
+            transform: translateY(100vh) rotate(360deg); /* Sayfanın tamamını kaplayacak şekilde ayarlandı. */
+        }
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <img src="https://tayfunbkts.github.io/bl/bl.png" alt="" width="1000px">
+  </div>
+
+  <div class="main-container">
+
+    <div class="input-container" id="giris">
+      <label for="inputValues">Katılımcı Girişi :</label>
+      <textarea id="inputValues" rows="4" cols="50" placeholder="Lütfen İsimleri virgülle ayırarak giriniz. isim1, isim2, isim3..."></textarea>
+    </div>
+
+    <div class="number-of-winners-container">
+
+      <div style="display: flex;">
+
+        <div class="number-of-winners">
+          <label for="asilKazananCountInput" style="margin-bottom: 5px;">Kazanan Sayısı:</label>
+          <input type="number" id="asilKazananCountInput" value="1" min="1" />
+        </div>
+        <div class="number-of-winners">
+          <label for="yedekKazananCountInput" style="margin-bottom: 5px;">Yedek Sayısı:</label>
+          <input type="number" id="yedekKazananCountInput" value="0" min="0" />
+        </div>
+      </div>
+
+      <div class="button-container">
+        <button onclick="addName()">İsimleri Ekle</button>
+        <button onclick="selectWinners()" style="white-space: nowrap;">Çekilişi Başlat</button>
+        <button id='reset'>Reset</button>
+      </div>
+
+    </div>
+  </div>
+  <div style="height: 50px;">
+    <p id="loadingMessage"></p>
+  </div>
+  <div class="flex-container">
+    <div class="winner-box">
+      <h5 class="box-title">Katılımcılar <span id='participants'></span></h5>
+      <ul id="displayList"></ul>
+    </div>
+    <div class="winner-box">
+      <h5 class="box-title">Kazananlar </h5>
+      <ul id="winners"></ul>
+    </div>
+    <div class="winner-box">
+      <h5 class="box-title">Yedekler</h5>
+      <ul id="bWinners"></ul>
+    </div>
+  </div>
+
+
+  <!-- <script src="./app.js"></script> -->
+
+  <script>
+    const asilKazananCountInput = document.getElementById("asilKazananCountInput");
+    const yedekKazananCountInput = document.getElementById("yedekKazananCountInput");
+    const winners = document.getElementById("winners");
+    const bWinners = document.getElementById("bWinners");
+    const displayList = document.getElementById("displayList");
+    const loadingMessage = document.getElementById("loadingMessage");
+    const giris = document.getElementById("giris");
+    const resetButton = document.getElementById('reset');
+
+    let valuesArray = [];
+    let asilKazananCount = 0;
+    let yedekKazananCount = 0;
+    let isimlerEklendi = false;
+    let cekilisBasladi = false;
+    let yedekSecimi = 0;
+    let son = 0;
+
+    function addName() {
+      const inputValues = document.getElementById("inputValues").value;
+      if (inputValues) {
+        if (!isimlerEklendi) {
+          const tempArray = inputValues.toLocaleUpperCase("tr").split(",");
+          valuesArray = tempArray.map(item => item.trim());
+          displayNames();
+          isimlerEklendi = true
+
+        } else {
+
+          let ask = confirm(`     İsimler Zaten Eklendi. 
+    Yeniden Başlamak İster  misiniz?`)
+
+          if (ask) {
+            isimlerEklendi = false;
+            valuesArray = []
+            displayNames();
+            displayList.innerHTML = ''
+            addName()
+          }
+
+        }
+      }
+
+    }
+
+    function displayNames() {
+      // valuesArray.sort()
+      valuesArray.sort((a, b) => a.localeCompare(b, 'tr'));
+      valuesArray.forEach((value) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = value.trim();
+        listItem.addEventListener("click", () => removeItem(listItem));
+        displayList.appendChild(listItem);
+        document.getElementById('participants').innerText = ` - ${valuesArray.length}`
+      });
+    }
+
+    function removeItem(item) {
+      const removedValue = item.textContent.trim();
+      item.parentNode.removeChild(item);
+      valuesArray = valuesArray.filter((value) => value.trim() !== removedValue);
+      document.getElementById('participants').innerText = ` - ${valuesArray.length}`
+    }
+
+    function selectWinners() {
+      if (!cekilisBasladi) {
+
+        asilKazananCount = parseInt(asilKazananCountInput.value);
+        yedekKazananCount = parseInt(yedekKazananCountInput.value);
+
+
+        if (!valuesArray.length) {
+          alert(`Lütfen önce katılımcıları ekleyiniz`)
+
+        } else if ((asilKazananCount + yedekKazananCount) > valuesArray.length) {
+          alert(`Katılımcı sayısı : ${valuesArray.length} \n Kazanan ve yedek kazanan toplamı katılımcı sayısına eşit veya daha düşük olmalıdır`)
+        } else if (asilKazananCountInput.value <= 0) {
+
+          alert(`Kazanan sayısı 0'dan büyük olmalıdır`)
+
+        } else {
+          startDraw()
+        }
+      }
+
+    }
+
+    function startDraw() {
+      if (isimlerEklendi) {
+        cekilisBasladi = true
+        giris.style.display = "none";
+
+        let index = 0;
+
+        for (let i = 0; i < asilKazananCount; i++) {
+          select()
+        }
+
+        function select() {
+          
+          const intervalID = setInterval(() => {
+            if (index < valuesArray.length) {
+              loadingMessage.innerText = valuesArray[index];
+              index += 2;
+            } else {
+              clearInterval(intervalID); 
+              const randomIndex = Math.floor(Math.random() * valuesArray.length);
+              const randomName = valuesArray[randomIndex];
+              loadingMessage.innerText = valuesArray[randomIndex];
+              let li = document.createElement("li");
+              li.textContent = randomName
+              winners.appendChild(li);
+              valuesArray.splice(randomIndex, 1);
+              displayList.innerHTML = ''
+              displayNames()
+              index = 0;
+              yedekSecimi++
+            }
+          }, 333);
+
+        }
+      }
+      finishChecks()
+    }
+
+
+    function backups() {
+      for (let i = 0; i < yedekKazananCount; i++) {
+        select()
+      }
+      let index = 0;
+
+      function select() {
+        const intervalID = setInterval(() => {
+          if (index < valuesArray.length) {
+            loadingMessage.innerText = valuesArray[index];
+            index +=2;
+          } else {
+            clearInterval(intervalID);
+            const randomIndex = Math.floor(Math.random() * valuesArray.length);
+            const randomName = valuesArray[randomIndex];
+            loadingMessage.innerText = valuesArray[randomIndex];
+            let li = document.createElement("li");
+            li.textContent = randomName
+            bWinners.appendChild(li);
+            valuesArray.splice(randomIndex, 1);
+            displayList.innerHTML = ''
+            index = 0;
+            displayNames()
+            son++
+
+          }
+        }, 333);
+
+      }
+    }
+
+    function finishChecks() {
+
+      const intervalID2 = setInterval(() => {
+        if (yedekSecimi === asilKazananCount) {
+          backups()
+          clearInterval(intervalID2);
+          konfetiYagdir()
+        }
+      }, 1000);
+
+      const intervalID3 = setInterval(() => {
+        if (son === yedekKazananCount) {
+          document.getElementById('participants').innerText = ` - ${valuesArray.length}`
+          clearInterval(intervalID3);
+          
+        }
+      }, 1000);
+
+    }
+
+    resetButton.addEventListener('click',()=>{
+      console.log('butona basıldı')
+
+      let resetle = confirm('Tüm süreç sıfırlanacaktır. Devam edilsin mi?') 
+      
+      if (resetle) {
+        window.location.reload()
+      }
+
+    })
+    
+    function konfetiYagdir() {
+      const emojis = ['🎉', '🎊', '🥳','🎈']; 
+      const konfetiSayisi = 200;  
+      for (let i = 0; i < konfetiSayisi; i++) {
+        let konfeti = document.createElement('div');
+        konfeti.className = 'konfeti';
+        konfeti.textContent = emojis[Math.floor(Math.random() * emojis.length)]; 
+        konfeti.style.left = Math.random() * window.innerWidth + 'px';
+        // konfeti.style.top = (Math.random() * window.innerHeight + window.scrollY) + 'px';
+        konfeti.style.animationDelay = Math.random() + 's'; 
+        document.body.appendChild(konfeti);
+        
+        setTimeout(() => {
+          konfeti.remove();  
+        }, 2000);  
+      }
+    }
+    
+    //Coded by Tayfun Bektaş - 2023
+    
+  </script>
+</body>
+
+</html>
