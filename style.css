@@ -1,0 +1,132 @@
+body {
+      color: black;
+      font-size: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .flex-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .winner-box {
+      border: 2px solid #13747B;
+      padding: 10px;
+      margin: 0 10px;
+      text-align: center;
+      box-sizing: border-box;
+      width: calc((900px - 40px) / 3);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    li:hover {
+      background-color: #f0f0f0;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+      background-color: #199CA6;
+      color: #fff;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #1EB8C4;
+    }
+
+    button:active {
+      background-color: #1EB8C4;
+    }
+
+    .input-container textarea {
+      margin-bottom: 10px;
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      resize: none;
+      width: 335px;
+      height: 150px;
+      overflow: auto;
+    }
+
+    .button-container button {
+      flex: 1;
+      margin: 10px 5px;
+    }
+
+    #loadingMessage {
+      font-weight: bold;
+      color: #13747B;
+
+    }
+
+    .box-title {
+      background-color: #13747B;
+      color: #fff;
+      margin: -10px -10px 0;
+      padding: 5px 10px;
+      text-align: center;
+    }
+
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      margin: 0px 10px 5px 5px;
+
+    }
+
+    .number-of-winners-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      border-radius: 8px;
+      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+      margin: 25px 5px 5px 10px;
+      padding: 20px;
+    }
+
+    .number-of-winners {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .main-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .konfeti {
+        font-size: 20px;
+        position: absolute;
+        pointer-events: none;
+        animation: hareket 2s infinite;
+    }
+
+    @keyframes hareket {
+        0% {
+            transform: translateY(0) rotate(0deg);
+        }
+        100% {
+            transform: translateY(100vh) rotate(360deg); /* Sayfanın tamamını kaplayacak şekilde ayarlandı. */
+        }
+    }
